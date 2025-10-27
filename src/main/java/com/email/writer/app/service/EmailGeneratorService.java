@@ -36,13 +36,13 @@ public class EmailGeneratorService {
 //        }
 //         this is the format in which request needs to be sent, it basically contains 3 nested maps(key value pair)
 
-//        Map<String,Object> requestBody = Map.of(
-//                "contents",new Object[]{  // first map key is content and its value is and Array Object
-//                        Map.of("parts",new Object[]{
-//                                Map.of("text", prompt)
-//                        })
-//                }
-//        );
+        Map<String,Object> requestBody = Map.of(
+                "contents",new Object[]{  // first map key is content and its value is and Array Object
+                        Map.of("parts",new Object[]{
+                                Map.of("text", prompt)
+                        })
+                }
+        );
 
         // Step 3
         // Do request and get response
