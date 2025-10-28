@@ -1,6 +1,8 @@
 package com.email.writer.app.service;
 
 import com.email.writer.app.dto.EmailRequest;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -52,6 +54,7 @@ public class EmailGeneratorService {
         String response = webClient.post() // sending data (the email prompt) using POST
                 .uri(geminiApiUrl+geminiApiKey)  // This sets the API endpoint URL you’re calling.
                 .header("Content-Type","application/json") // This means: I’m sending data in JSON format.
+                .bodyValue(requestBody)
                 .retrieve() //  It actually sends the request to the Gemini API, Gemini responds, .retrieve() prepares to receive that response
                 .bodyToMono(String.class) //  ake the response body and convert it into a String wrapped in a Mono, we have two Mono for single reply and Flux for stream of reply
                 // Mono<String> = a “promise” that one String value will arrive in the future, It’s part of the reactive programming idea — the response isn’t here yet, but it will come.
@@ -59,19 +62,27 @@ public class EmailGeneratorService {
 
         // Step 4
         // Extract response from gemini api format and Return it
-//        return extractResponseContent(response);
-    return "";
+        return extractResponseContent(response);
     }
 
-//    private String extractResponseContent(String response) {
-//        try {
-//            return "";
-//
-//        } catch (Exception e) {
-//            return "Error processing request: " + e.getMessage();
-//        }
-//
-//    }
+    private String extractResponseContent(String response) {
+        try {
+            ObjectMapper mapper = new ObjectMapper(); // tool from jackson library which helps to work with json data
+            // it can read write and convert json data to java object and java object to json data
+            JsonNode rootNode = mapper.readTree(response); // readTree method convert json response into tree like structure
+            return rootNode.path("candidates")
+                    .get(0)
+                    .path("content")
+                    .path("parts")
+                    .get(0)
+                    .path("text")
+                    .asText();
+            // navigating tree to our text which is response form api
+        } catch (Exception e) {
+            return "Error processing request: " + e.getMessage();
+        }
+
+    }
 
     // Prompt for gemini APi is crafted in this method
     private String buildPrompt(EmailRequest emailRequest) {
