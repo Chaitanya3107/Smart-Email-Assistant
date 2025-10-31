@@ -65,8 +65,21 @@ server.port=808
 
 ## 🧩 API Flow Diagram
 "Here’s how the complete data flow works between the browser extension / frontend, backend, and Gemini AI 👇"
+```mermaid
+sequenceDiagram
+    participant User as 🧑‍💻 User (Gmail/Frontend)
+    participant Ext as 🔌 Chrome Extension
+    participant API as ☕ Spring Boot Backend
+    participant Gemini as 🤖 Gemini API
 
-<img width="1104" height="500" alt="image" src="https://github.com/user-attachments/assets/becd0a53-1153-4ce6-bed3-cd7978c113d1" />
+    User->>Ext: Clicks "AI Reply" button
+    Ext->>API: POST /api/email/generate<br/>{"emailContent", "tone"}
+    API->>API: Build prompt & format request JSON
+    API->>Gemini: POST Gemini API Request (via WebClient)
+    Gemini-->>API: Returns AI-generated reply text
+    API-->>Ext: Sends generated email reply
+    Ext-->>User: Inserts reply into Gmail compose bo
+```
 
 
 
