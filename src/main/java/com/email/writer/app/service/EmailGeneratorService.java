@@ -87,7 +87,7 @@ public class EmailGeneratorService {
     // Prompt for gemini APi is crafted in this method
     private String buildPrompt(EmailRequest emailRequest) {
         StringBuilder prompt = new StringBuilder();
-        prompt.append("Generate a professional email reply for the following email content. Please don't generate a subject line. ");
+        prompt.append("Generate a email reply for the following email content. Please don't generate a subject line.Only generate reply nothing else ");
         if(emailRequest.getTone()!=null  && !emailRequest.getTone().isEmpty()){
             prompt.append("use an ").append(emailRequest.getTone()).append(" tone.");
         }
